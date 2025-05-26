@@ -1,6 +1,9 @@
 name: Cypress Tests
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   install:
@@ -8,6 +11,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Kies een geschikte Node versie
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Cypress install
         uses: cypress-io/github-action@v6
@@ -20,18 +31,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build
-          if-no-files-found: error
           path: dist
 
- cypress-run:
+  cypress-run:
     runs-on: ubuntu-24.04
     needs: install
-    strategy:
-      # don't fail the entire matrix on failure
-      fail-fast: false
-      matrix:
-        # run copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,10 +45,18 @@ jobs:
         with:
           name: build
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Kies een geschikte Node versie
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           record: true
-          parallel: true
+          parallel: false  # Zet parallelism uit om debugging gemakkelijker te maken
           group: 'UI-Chrome'
           start: npm start
