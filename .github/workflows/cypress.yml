@@ -13,9 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies (legacy peer deps)
-        run: npm ci --legacy-peer-deps
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
